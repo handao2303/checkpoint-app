@@ -1,4 +1,4 @@
-name: Build Web App (Self-Hosted)
+name: Build Web App
 
 on:
   push:
@@ -12,23 +12,24 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     defaults:
       run:
-        shell: cmd
+        shell: bash
         working-directory: ./web # Chạy các lệnh NPM bên trong thư mục web
+
     steps:
       - name: Checkout main repo
         uses: actions/checkout@v4
 
-      - name: Clone React App
-        working-directory: .
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          if exist web rmdir /s /q web
-          git clone --depth 1 https://%GH_PAT%@github.com/uitbestteam/checkpoint-app-reactjs.git web
+      # `web` là repo riêng (private) nên phải checkout kèm PAT.
+      - name: Checkout React App
+        uses: actions/checkout@v4
+        with:
+          repository: uitbestteam/checkpoint-app-reactjs
+          path: web
+          token: ${{ secrets.GH_PAT }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,7 +37,7 @@ jobs:
           node-version: '22' # Sử dụng bản LTS ổn định
 
       - name: Install dependencies
-        run: npm.cmd install
+        run: npm install
 
       - name: Build project
-        run: npm.cmd run build
+        run: npm run build
