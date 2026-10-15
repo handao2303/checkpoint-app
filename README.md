@@ -200,6 +200,7 @@ checkpoint/
 ├── web/            Vite + React 19 PWA: Tailwind v4, Cloudflare     → checkpoint-app-reactjs
 ├── design/         mockups + design tokens (design/tokens/)
 ├── docs/           STATUS.md · backend.md · frontend.md · các plan
+├── demo-video/     mã nguồn HyperFrames của video demo (docs/demo/)
 ├── checkpoint_*_svg/  bộ icon huy hiệu, level, khung avatar
 └── CHECKPOINT.md   roadmap đầy đủ (7 phases, 16 features)
 ```

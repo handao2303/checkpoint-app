@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="vi" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Checkpoint App Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #fff6ee;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: system-ui, sans-serif;
+        color: #1f140e;
+        background: #fff6ee;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* ---------- Background ---------- */
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+      }
+      #blob-a {
+        left: 960px;
+        top: 100px;
+        width: 800px;
+        height: 800px;
+        background: #ffc9a8;
+        opacity: 0.8;
+      }
+      #blob-b {
+        left: -180px;
+        top: 640px;
+        width: 640px;
+        height: 640px;
+        background: #ffe0b8;
+        opacity: 0.85;
+      }
+      #blob-c {
+        left: 1520px;
+        top: -220px;
+        width: 540px;
+        height: 540px;
+        background: #ffab85;
+        opacity: 0.45;
+      }
+      .dots {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(140, 70, 30, 0.12) 1.5px, transparent 1.5px);
+        background-size: 34px 34px;
+      }
+      .stamp-bg {
+        position: absolute;
+        opacity: 0.16;
+      }
+
+      /* ---------- Intro ---------- */
+      #intro {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 290px;
+        text-align: center;
+      }
+      #intro .line {
+        display: block;
+        overflow: hidden;
+        font-size: 128px;
+        line-height: 1.12;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+      }
+      #intro .li {
+        display: inline-block;
+      }
+      #intro .orange {
+        color: #d8410f;
+      }
+      #intro-logo {
+        position: absolute;
+        left: 900px;
+        top: 150px;
+        width: 120px;
+        height: 120px;
+        border-radius: 30px;
+        box-shadow: 0 20px 40px rgba(150, 50, 10, 0.25);
+      }
+
+      /* ---------- Captions ---------- */
+      .brand {
+        position: absolute;
+        left: 170px;
+        top: 88px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        opacity: 0;
+      }
+      .brand img {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+      }
+      .brand-mark {
+        font-size: 30px;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+      }
+      .brand-tag {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        color: #b83a0c;
+        border: 2px solid #b83a0c;
+        border-radius: 999px;
+        padding: 6px 14px;
+      }
+      .caption {
+        position: absolute;
+        left: 170px;
+        top: 360px;
+        width: 760px;
+        opacity: 0;
+      }
+      .caption .step {
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        color: #b83a0c;
+        margin-bottom: 22px;
+        opacity: 0;
+      }
+      .caption h2 {
+        font-size: 74px;
+        line-height: 1.06;
+        font-weight: 850;
+        letter-spacing: -0.025em;
+        margin-bottom: 26px;
+      }
+      .caption p {
+        font-size: 28px;
+        line-height: 1.45;
+        color: #5e4f46;
+        max-width: 640px;
+        opacity: 0;
+      }
+      .w {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: top;
+        padding-bottom: 0.1em;
+      }
+      .wi {
+        display: inline-block;
+      }
+
+      .nav {
+        position: absolute;
+        left: 170px;
+        top: 850px;
+        display: flex;
+        gap: 12px;
+        opacity: 0;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        font-size: 19px;
+        font-weight: 700;
+        color: #6e5b50;
+      }
+      .nav-item i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d9c6b8;
+      }
+      .nav-on {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: #f4511e;
+        opacity: 0;
+      }
+      .nav-item {
+        position: relative;
+      }
+      .nav-item span,
+      .nav-item i {
+        position: relative;
+      }
+
+      /* ---------- Phone ---------- */
+      .ring {
+        position: absolute;
+        left: 1042px;
+        top: 290px;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        border: 3px solid #f4511e;
+        opacity: 0;
+      }
+      #phone-wrap {
+        position: absolute;
+        left: 1080px;
+        top: 75px;
+        width: 424px;
+        height: 930px;
+        perspective: 1800px;
+      }
+      #phone-entry,
+      #phone-float,
+      #phone {
+        position: absolute;
+        inset: 0;
+      }
+      #phone-entry {
+        opacity: 0;
+      }
+      .phone-body {
+        position: absolute;
+        inset: 0;
+        padding: 12px;
+        border-radius: 62px;
+        background: #17110d;
+        box-shadow:
+          0 60px 110px rgba(120, 40, 10, 0.25),
+          0 0 0 2px #2e2620 inset;
+      }
+      .screen {
+        position: relative;
+        width: 400px;
+        height: 906px;
+        border-radius: 50px;
+        overflow: hidden;
+        background: #fff8f2;
+      }
+      .statusbar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 40px;
+        background: #fff8f2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 34px 0 40px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #1f140e;
+      }
+      .sb-icons {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .sb-icons b {
+        display: block;
+        width: 16px;
+        height: 10px;
+        border-radius: 2px;
+        background: #1f140e;
+      }
+      .sb-icons b:last-child {
+        width: 24px;
+        height: 12px;
+        border-radius: 3px;
+      }
+      #app {
+        position: absolute;
+        left: 0;
+        top: 40px;
+        width: 400px;
+        height: 866px;
+        overflow: hidden;
+      }
+      .scr {
+        position: absolute;
+        inset: 0;
+        background: #fff8f2;
+      }
+      .scr > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .strip-win {
+        position: absolute;
+        overflow: hidden;
+      }
+      .strip-win img {
+        display: block;
+        width: 100%;
+      }
+      .island {
+        position: absolute;
+        top: 10px;
+        left: 140px;
+        width: 120px;
+        height: 32px;
+        border-radius: 16px;
+        background: #000;
+      }
+      .glare {
+        position: absolute;
+        inset: 0;
+        border-radius: 50px;
+        background: linear-gradient(115deg, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 65%);
+        opacity: 0;
+      }
+      #touch {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        border: 3px solid #fff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        opacity: 0;
+      }
+      #ripple {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 3px solid #f4511e;
+        opacity: 0;
+      }
+
+      /* ---------- Finale wall ---------- */
+      .tile {
+        position: absolute;
+        top: 345px;
+        width: 178px;
+        height: 391px;
+        padding: 6px;
+        border-radius: 30px;
+        background: #17110d;
+        box-shadow: 0 30px 60px rgba(120, 40, 10, 0.22);
+        opacity: 0;
+      }
+      .tile img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 24px;
+        object-fit: cover;
+      }
+      #wall-title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 130px;
+        text-align: center;
+        font-size: 64px;
+        font-weight: 850;
+        letter-spacing: -0.02em;
+        opacity: 0;
+      }
+
+      /* ---------- Chips ---------- */
+      .chip {
+        position: absolute;
+        left: 1560px;
+        width: 310px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 18px 40px rgba(120, 45, 10, 0.14);
+        opacity: 0;
+      }
+      .chip .ico {
+        flex: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f4511e;
+        display: grid;
+        place-items: center;
+      }
+      .chip .ico svg {
+        width: 22px;
+        height: 22px;
+      }
+      .chip b {
+        display: block;
+        font-size: 20px;
+        font-weight: 800;
+        color: #1f140e;
+      }
+      .chip small {
+        display: block;
+        margin-top: 3px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #6e5b50;
+      }
+
+      /* ---------- Outro ---------- */
+      #wipe {
+        position: absolute;
+        left: 910px;
+        top: 490px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #f4511e;
+      }
+      .outro {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        perspective: 1200px;
+      }
+      #outro-logo {
+        width: 150px;
+        height: 150px;
+        border-radius: 38px;
+        box-shadow: 0 24px 50px rgba(80, 20, 0, 0.3);
+        margin-bottom: 30px;
+      }
+      .outro h1 {
+        display: flex;
+        font-size: 150px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+      .outro h1 span {
+        display: inline-block;
+      }
+      .outro p {
+        margin-top: 8px;
+        font-size: 36px;
+        font-weight: 600;
+        opacity: 0;
+      }
+      #outro-url {
+        margin-top: 34px;
+        padding: 14px 34px;
+        border-radius: 999px;
+        background: #fff;
+        color: #b83a0c;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-txm2" id="root" data-composition-id="main" data-start="0" data-duration="60.8" data-width="1920" data-height="1080">
+      <!-- BACKGROUND (whole video) -->
+      <section data-hf-id="hf-4k85" id="bg" class="clip" data-start="0" data-duration="60.8" data-track-index="0">
+        <div data-hf-id="hf-oe98" class="layer" id="bg-layer">
+          <div data-hf-id="hf-nrpc" class="blob" id="blob-a"></div>
+          <div data-hf-id="hf-yn6z" class="blob" id="blob-b"></div>
+          <div data-hf-id="hf-up2y" class="blob" id="blob-c"></div>
+          <div data-hf-id="hf-zx1w" class="dots"></div>
+        </div>
+      </section>
+
+      <!-- MAIN STAGE -->
+      <section data-hf-id="hf-a84i" id="stage" class="clip" data-start="0" data-duration="56" data-track-index="1">
+        <div data-hf-id="hf-ay9m" id="stage-inner" class="layer">
+          <img data-hf-id="hf-bk84" id="intro-logo" src="assets/logo.png" alt="Checkpoint">
+          <div data-hf-id="hf-j6bt" id="intro">
+            <span data-hf-id="hf-k6gu" class="line" data-layout-allow-overflow=""><span data-hf-id="hf-p98s" class="li">Hộ chiếu du lịch số.</span></span>
+            <span data-hf-id="hf-kxia" class="line" data-layout-allow-overflow=""><span data-hf-id="hf-pl5e" class="li">Cắm cờ mọi nơi</span></span>
+            <span data-hf-id="hf-lbtb" class="line" data-layout-allow-overflow=""><span data-hf-id="hf-t9vo" class="li orange">bạn đi qua.</span></span>
+          </div>
+
+          <div data-hf-id="hf-oojr" class="brand">
+            <img data-hf-id="hf-4d1q" src="assets/logo.png" alt="">
+            <div data-hf-id="hf-ig1t" class="brand-mark">Checkpoint</div>
+            <div data-hf-id="hf-zs6a" class="brand-tag">APP DEMO</div>
+          </div>
+
+          <div data-hf-id="hf-iuvo" id="captions"></div>
+
+          <div data-hf-id="hf-njgk" class="nav" id="nav">
+            <div data-hf-id="hf-5avh" class="nav-item"><div data-hf-id="hf-50y3" class="nav-on"></div><i data-hf-id="hf-wt6k"></i><span data-hf-id="hf-s9io">Bản đồ</span></div>
+            <div data-hf-id="hf-m2rl" class="nav-item"><div data-hf-id="hf-elij" class="nav-on"></div><i data-hf-id="hf-zeb8"></i><span data-hf-id="hf-lwc7">Khám phá</span></div>
+            <div data-hf-id="hf-n9oo" class="nav-item"><div data-hf-id="hf-e77i" class="nav-on"></div><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-gdef">Bảng XH</span></div>
+            <div data-hf-id="hf-mvdn" class="nav-item"><div data-hf-id="hf-dswh" class="nav-on"></div><i data-hf-id="hf-ylp6"></i><span data-hf-id="hf-iu8g">Hồ sơ</span></div>
+            <div data-hf-id="hf-kvui" class="nav-item"><div data-hf-id="hf-delg" class="nav-on"></div><i data-hf-id="hf-0l8b"></i><span data-hf-id="hf-n6hh">Check-in</span></div>
+          </div>
+
+          <div id="world" class="layer">
+          <div id="cam" class="layer">
+          <div data-hf-id="hf-okxl" class="ring" id="ring-0"></div>
+          <div data-hf-id="hf-nt9s" class="ring" id="ring-1"></div>
+          <div data-hf-id="hf-wh5n" class="ring" id="ring-2"></div>
+
+          <div data-hf-id="hf-5qno" id="phone-wrap">
+            <div data-hf-id="hf-y1vw" id="phone-entry">
+              <div data-hf-id="hf-4yzy" id="phone-float">
+                <div data-hf-id="hf-5iuv" id="phone">
+                  <div data-hf-id="hf-q65t" class="phone-body">
+                    <div data-hf-id="hf-3u4r" class="screen" id="screen" data-layout-allow-overflow="">
+                      <div data-hf-id="hf-sz55" class="statusbar">
+                        <span data-hf-id="hf-zwmt">9:41</span>
+                        <div data-hf-id="hf-5t5a" class="sb-icons"><b data-hf-id="hf-xujp"></b><b data-hf-id="hf-ey49"></b></div>
+                      </div>
+                      <div data-hf-id="hf-dtt5" id="app" data-layout-allow-overflow=""></div>
+                      <div data-hf-id="hf-7sfr" class="island"></div>
+                      <div data-hf-id="hf-reyk" class="glare" id="glare"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+          <div id="wall" class="layer"></div>
+          </div>
+
+          <div id="wall-title" data-layout-allow-overflow></div>
+          <div data-hf-id="hf-f8d2" id="chips"></div>
+        </div>
+      </section>
+
+      <!-- OUTRO -->
+      <section data-hf-id="hf-558e" id="outro" class="clip" data-start="55.4" data-duration="5.4" data-track-index="2">
+        <div data-hf-id="hf-omfg" id="wipe"></div>
+        <div data-hf-id="hf-e0lx" class="outro">
+          <img data-hf-id="hf-j5ht" id="outro-logo" src="assets/logo.png" alt="Checkpoint">
+          <h1 data-hf-id="hf-cd5d" id="outro-title"><span data-hf-id="hf-lzk6">C</span><span data-hf-id="hf-vx7v">h</span><span data-hf-id="hf-xwr0">e</span><span data-hf-id="hf-ypd2">c</span><span data-hf-id="hf-viwu">k</span><span data-hf-id="hf-sqrn">p</span><span data-hf-id="hf-txoq">o</span><span data-hf-id="hf-wbiw">i</span><span data-hf-id="hf-tjdp">n</span><span data-hf-id="hf-r5jj">t</span></h1>
+          <p data-hf-id="hf-pdwu" id="outro-line">Hộ chiếu du lịch số của bạn</p>
+          <div data-hf-id="hf-23w6" id="outro-url">checkpoint-app.space</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // ---------------- Timing knobs ----------------
+      const INTRO = 4.2; // when the first screen's own hold begins
+      const OUTRO = 55.4; // keep in sync with #outro data-start (= INTRO + sum of dur + 3.8s wall finale)
+      const S = 400 / 390; // app CSS px (390x844 capture) -> phone screen px
+
+      // ---------------- Storyboard ----------------
+      // img: screenshot in assets/screens. dur: seconds on screen. nav: section index.
+      // via: how this screen arrives (push | fade | sheet). tap: [x,y] tapped before
+      // leaving (390x844 coords). strip: scrolling content captured as one tall image
+      // { src, rect:[x,y,w,h], to: scroll px, at, d, back: seconds to scroll back up }.
+      const STEPS = [
+        { img: "map-0", dur: 3.2, nav: 0, zoom: 1.6, tap: [38, 119],
+          cap: ["BẢN ĐỒ", "Bản đồ check-in của cộng đồng", "Ảnh thật từ những nơi mọi người vừa cắm cờ, hiện ngay quanh bạn."],
+          chips: [{ t: "307 địa điểm", s: "Quanh TP.HCM" }, { t: "Cụm điểm thông minh", s: "Gom ảnh khi thu nhỏ" }] },
+        { img: "map-1", dur: 1.6, nav: 0, via: "fade", zoom: 1.6, tap: [36, 194],
+          cap: ["BẢN ĐỒ", "Lọc theo danh mục", "Cà phê, ăn uống, ngắm cảnh, thiên nhiên và hơn thế nữa."] },
+        { img: "map-2", dur: 2.2, nav: 0, via: "fade", zoom: 1.6, tap: [351, 436],
+          cap: ["BẢN ĐỒ", "Chỉ hiện quán cà phê", "Bản đồ cập nhật tức thì theo bộ lọc bạn chọn."] },
+        { img: "map-3", dur: 3.0, nav: 0, via: "sheet", tap: [355, 40],
+          cap: ["BẢN ĐỒ", "Xem từng check-in", "Chạm vào một điểm để xem ảnh, lời nhắn và thả cảm xúc."],
+          chips: [{ t: "Thả cảm xúc", s: "Thích · Yêu thích · Haha" }] },
+        { img: "menu", dur: 2.0, nav: 1, via: "fade", tap: [278, 134],
+          cap: ["ĐIỀU HƯỚNG", "Năm khu vực chính", "Bản đồ, Khám phá, Tạo mới, Bảng xếp hạng và Cá nhân."] },
+        { img: "disc", dur: 4.6, nav: 1, via: "push", zoom: 1.6, tap: [181, 121],
+          strip: { src: "disc-strip", rect: [0, 81, 390, 722], to: 1000, at: 0.7, d: 2.2, back: 0.7 },
+          cap: ["KHÁM PHÁ", "Đang hot gần bạn", "Địa điểm nhiều người vừa cắm cờ và hàng trăm điểm quanh bạn."],
+          chips: [{ t: "Đang hot", s: "Theo lượt cắm cờ" }, { t: "Gần bạn", s: "Sắp xếp theo khoảng cách" }] },
+        { img: "search", dur: 2.4, nav: 1, via: "fade", tap: [289, 122],
+          cap: ["KHÁM PHÁ", "Tìm kiếm tức thì", "Gõ tên quán, kết quả hiện ngay kèm đánh giá và khoảng cách."] },
+        { img: "disc", dur: 1.8, nav: 1, via: "fade", zoom: 1.6, tap: [112, 307],
+          cap: ["KHÁM PHÁ", "Chọn một địa điểm", "Mỗi thẻ có điểm đánh giá, lượt cắm cờ và khoảng cách."] },
+        { img: "place", dur: 4.4, nav: 1, via: "sheet", tap: [359, 78],
+          strip: { src: "place-strip", rect: [1, 95.64, 388, 747], to: 950, at: 0.8, d: 2.6 },
+          cap: ["ĐỊA ĐIỂM", "Chi tiết địa điểm", "Ảnh, đánh giá, chỉ đường và các check-in gần đây."],
+          chips: [{ s: "Điểm đánh giá", count: ["", 5, " ★", 1] }, { t: "+10 XP", s: "Cho mỗi lần cắm cờ" }] },
+        { img: "board", dur: 4.4, nav: 2, via: "push", zoom: 1.6, tap: [195, 391],
+          strip: { src: "board-strip", rect: [0, 81, 390, 722], to: 900, at: 0.7, d: 2.0, back: 0.7 },
+          cap: ["BẢNG XẾP HẠNG", "Đua top khám phá mỗi tuần", "Tích XP mỗi lần cắm cờ để leo hạng cùng bạn bè."],
+          chips: [{ s: "Top XP tuần này", count: ["", 1920, " XP", 0] }, { t: "26 người chơi", s: "Cùng đua top" }] },
+        { img: "prof", dur: 4.0, nav: 3, via: "sheet", zoom: 1.6, tap: [348, 449],
+          strip: { src: "prof-strip", rect: [1, 112.53, 388, 730], to: 420, at: 0.7, d: 1.5, back: 0.6 },
+          cap: ["HỒ SƠ", "Hồ sơ du lịch của bạn", "Cấp độ, XP, số cờ đã cắm, chuỗi ngày và hành trình."],
+          chips: [{ s: "Lá cờ đã cắm", count: ["", 192, "", 0] }, { t: "Cấp 5", s: "Lên cấp theo XP" }] },
+        { img: "passport", dur: 2.8, nav: 3, via: "sheet", zoom: 1.6, tap: [76, 347],
+          cap: ["HỘ CHIẾU", "Bộ sưu tập con dấu", "Mỗi thành phố mới mở khoá một con dấu hộ chiếu."],
+          chips: [{ s: "Con dấu thành phố", count: ["", 13, "", 0] }] },
+        { img: "stamp", dur: 2.8, nav: 3, via: "sheet", tap: [69, 304],
+          cap: ["HỘ CHIẾU", "Khoảnh khắc theo thành phố", "Toàn bộ ảnh check-in được gom theo từng con dấu."] },
+        { img: "moment", dur: 2.6, nav: 3, via: "fade", tap: [366, 22],
+          cap: ["KHOẢNH KHẮC", "Ngắm trọn từng khoảnh khắc", "Xem ảnh toàn màn hình, xoay và lướt nhanh."] },
+        { img: "map-0", dur: 2.2, nav: 4, via: "fade", zoom: 1.6, tap: [195, 759],
+          cap: ["CHECK-IN", "Cắm cờ nơi bạn đứng", "Định vị chính xác, chụp ảnh và nhận XP ngay lập tức."],
+          chips: [{ t: "Định vị chính xác", s: "Cắm cờ đúng nơi bạn đứng" }] },
+        { img: "checkin", dur: 3.4, nav: 4, via: "sheet",
+          cap: ["BẮT ĐẦU", "Bắt đầu hành trình", "Đăng nhập để cắm cờ, nhận XP và mở khoá con dấu thành phố."],
+          chips: [{ t: "Miễn phí", s: "Cài như app trên điện thoại" }] },
+      ];
+
+      const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+      const fmt = (v, d) => (d ? v.toFixed(d) : Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+      const words = (s) => s.split(/\s+/).map((w) => '<span class="w"><span class="wi" data-layout-allow-overlap>' + w + "</span></span>").join(" ");
+
+      // ---------------- Build DOM (setup only) ----------------
+      const app = document.getElementById("app");
+      const capWrap = document.getElementById("captions");
+      const chipWrap = document.getElementById("chips");
+
+      STEPS.forEach((s, k) => {
+        let html = '<div class="scr" id="scr-' + k + '"><img src="assets/screens/' + s.img + '.jpg" alt="" />';
+        if (s.strip) {
+          const [x, y, w, h] = s.strip.rect;
+          html += '<div class="strip-win" style="left:' + x * S + "px;top:" + y * S + "px;width:" + w * S + "px;height:" + h * S + 'px"><img id="strip-' + k + '" src="assets/screens/' + s.strip.src + '.jpg" alt="" /></div>';
+        }
+        app.insertAdjacentHTML("beforeend", html + "</div>");
+
+        capWrap.insertAdjacentHTML(
+          "beforeend",
+          '<div class="caption" id="cap-' + k + '"><div class="step" data-layout-allow-overlap>' + s.cap[0] + "</div><h2>" + words(s.cap[1]) + "</h2><p>" + s.cap[2] + "</p></div>"
+        );
+
+        (s.chips || []).forEach((c, i) => {
+          const title = c.count ? c.count[0] + fmt(0, c.count[3]) + c.count[2] : c.t;
+          chipWrap.insertAdjacentHTML(
+            "beforeend",
+            '<div class="chip" id="chip-' + k + "-" + i + '" style="top:' + (260 + i * 112) + 'px"><div class="ico">' + CHECK + "</div><div><b>" + title + "</b><small>" + c.s + "</small></div></div>"
+          );
+        });
+      });
+      app.insertAdjacentHTML("beforeend", '<div id="ripple"></div><div id="touch"></div>');
+
+      // Decorative passport stamps drifting in the background
+      const STAMPS = [
+        [120, 140, 150, "HCM"], [1700, 760, 180, "HN"], [880, 40, 130, "ĐN"], [1520, 90, 120, "SG"], [40, 560, 110, "HUẾ"],
+      ];
+      STAMPS.forEach(([x, y, d, label], i) => {
+        document.getElementById("bg-layer").insertAdjacentHTML(
+          "beforeend",
+          '<svg class="stamp-bg" id="stamp-bg-' + i + '" style="left:' + x + "px;top:" + y + "px;width:" + d + "px;height:" + d + 'px" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#c2410c" stroke-width="3" stroke-dasharray="6 4"/><circle cx="50" cy="50" r="36" fill="none" stroke="#c2410c" stroke-width="2"/><path d="M50 30 L56 47 L74 50 L56 54 L50 72 L44 54 L26 50 L44 47 Z" fill="#c2410c"/></svg>'
+        );
+      });
+
+      // ---------------- Timing ----------------
+      const starts = [0];
+      let acc = INTRO + STEPS[0].dur;
+      for (let k = 1; k < STEPS.length; k++) {
+        starts.push(acc);
+        acc += STEPS[k].dur;
+      }
+      const startOf = (k) => (k < STEPS.length ? starts[k] : acc);
+      const stageEnd = acc; // == OUTRO
+
+      // ---------------- Timeline ----------------
+      const scrs = STEPS.map((s, k) => "#scr-" + k);
+      STEPS.forEach((s, k) => {
+        if (k === 0) return;
+        if (s.via === "fade") tl.set(scrs[k], { opacity: 0 }, 0);
+        else if (s.via === "sheet") tl.set(scrs[k], { clipPath: "inset(100% 0% 0% 0%)" }, 0);
+        else tl.set(scrs[k], { xPercent: 100 }, 0);
+      });
+      tl.set(["#touch", "#ripple"], { xPercent: -50, yPercent: -50 }, 0);
+      tl.set(".caption .wi", { yPercent: 115 }, 0);
+
+      // Ambient background
+      tl.to("#blob-a", { x: -140, y: 80, scale: 1.12, duration: 8, ease: "sine.inOut", yoyo: true, repeat: 6 }, 0);
+      tl.to("#blob-b", { x: 180, y: -120, duration: 9, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0);
+      tl.to("#blob-c", { x: -120, y: 140, duration: 7, ease: "sine.inOut", yoyo: true, repeat: 7 }, 0);
+      STAMPS.forEach((st, i) => {
+        tl.fromTo("#stamp-bg-" + i, { rotation: -10 + i * 7 }, { rotation: 30 + i * 7, transformOrigin: "50% 50%", duration: 57, ease: "none" }, 0);
+      });
+
+      // Intro
+      tl.fromTo("#intro-logo", { scale: 0, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, 0.15);
+      tl.fromTo("#intro .li", { yPercent: 110 }, { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.22 }, 0.35);
+      tl.to("#intro .li", { yPercent: -110, duration: 0.6, ease: "power3.in", stagger: 0.08 }, 2.75);
+      tl.to("#intro-logo", { scale: 0, opacity: 0, duration: 0.5, ease: "power3.in" }, 2.8);
+
+      tl.fromTo(
+        "#phone-entry",
+        { opacity: 0, x: 420, y: 260, rotationY: -48, rotationX: 22, rotationZ: 10, scale: 0.75 },
+        { opacity: 1, x: 0, y: 0, rotationY: 0, rotationX: 0, rotationZ: 0, scale: 1, duration: 1.5, ease: "expo.out" },
+        3.15
+      );
+      tl.fromTo("#glare", { opacity: 0, xPercent: -60 }, { opacity: 1, xPercent: 60, duration: 1.1, ease: "power2.inOut" }, 3.6);
+      tl.to("#glare", { opacity: 0, duration: 0.25 }, 4.75);
+      tl.fromTo("#phone-float", { y: 0, rotationY: 0 }, { y: -14, rotationY: -5, rotationX: 2, duration: 3.2, ease: "sine.inOut", yoyo: true, repeat: 14 }, 4.6);
+      tl.to(".brand", { opacity: 1, duration: 0.6, ease: "power2.out" }, 3.5);
+      tl.to("#nav", { opacity: 1, duration: 0.6, ease: "power2.out" }, 4.0);
+
+      // Section nav highlight
+      let curNav = -1;
+      STEPS.forEach((s, k) => {
+        if (s.nav === curNav) return;
+        const t = k === 0 ? 4.0 : startOf(k);
+        const items = document.querySelectorAll(".nav-item");
+        if (curNav >= 0) {
+          tl.to(items[curNav].querySelector(".nav-on"), { opacity: 0, duration: 0.35 }, t);
+          tl.to(items[curNav].querySelector("span"), { color: "#6e5b50", duration: 0.35 }, t);
+          tl.to(items[curNav].querySelector("i"), { backgroundColor: "#d9c6b8", duration: 0.35 }, t);
+        }
+        tl.fromTo(items[s.nav].querySelector(".nav-on"), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, t);
+        tl.to(items[s.nav].querySelector("span"), { color: "#ffffff", duration: 0.35 }, t);
+        tl.to(items[s.nav].querySelector("i"), { backgroundColor: "#ffffff", duration: 0.35 }, t);
+        curNav = s.nav;
+      });
+
+      STEPS.forEach((s, k) => {
+        const t = startOf(k);
+        const next = startOf(k + 1);
+        const hold = k === 0 ? INTRO : t; // when this screen's own beat begins
+        const cap = "#cap-" + k;
+
+        // Caption
+        const tin = k === 0 ? 3.7 : t + 0.15;
+        tl.set(cap, { opacity: 1 }, tin);
+        tl.fromTo(cap + " .step", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, tin);
+        tl.fromTo(cap + " .wi", { yPercent: 115, rotationZ: 4 }, { yPercent: 0, rotationZ: 0, duration: 0.75, ease: "expo.out", stagger: 0.06 }, tin + 0.05);
+        tl.fromTo(cap + " p", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, tin + 0.25);
+        if (k < STEPS.length - 1) {
+          tl.to(cap + " .wi", { yPercent: -115, duration: 0.35, ease: "power3.in", stagger: 0.03 }, next - 0.3);
+          tl.to([cap + " .step", cap + " p"], { opacity: 0, y: -10, duration: 0.3, ease: "power2.in" }, next - 0.3);
+          tl.set(cap, { opacity: 0 }, next + 0.1);
+        }
+
+        // Arrival
+        if (k > 0) {
+          if (s.via === "fade") {
+            tl.fromTo(scrs[k], { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, t);
+          } else if (s.via === "sheet") {
+            tl.fromTo(scrs[k], { clipPath: "inset(100% 0% 0% 0%)", y: 60 }, { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 0.6, ease: "expo.out" }, t);
+          } else {
+            tl.to(scrs[k], { xPercent: 0, duration: 0.6, ease: "expo.inOut" }, t);
+            tl.to(scrs[k - 1], { xPercent: -35, duration: 0.6, ease: "expo.inOut" }, t);
+            tl.fromTo("#phone", { rotationY: 0 }, { rotationY: -7, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+          }
+        }
+
+        // Smooth content scroll (real captured content)
+        if (s.strip) {
+          const st = s.strip;
+          const a = hold + st.at;
+          tl.to("#strip-" + k, { y: -st.to * S, duration: st.d, ease: "power2.inOut" }, a);
+          if (st.back) tl.to("#strip-" + k, { y: 0, duration: st.back, ease: "power3.inOut" }, a + st.d + 0.2);
+        }
+
+        // Finger glides in, presses, ripples
+        if (s.tap) {
+          const x = s.tap[0] * S;
+          const y = s.tap[1] * S;
+          const tt = next - 0.4;
+          tl.fromTo("#touch", { x: x + 60, y: y + 90, opacity: 0, scale: 1.2 }, { immediateRender: false, x, y, opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, tt - 0.45);
+          tl.to("#touch", { scale: 0.75, duration: 0.1, ease: "power2.in" }, tt);
+          tl.to("#touch", { scale: 1, opacity: 0, duration: 0.35, ease: "power2.out" }, tt + 0.1);
+          tl.fromTo("#ripple", { x, y, scale: 0.6, opacity: 1 }, { immediateRender: false, x, y, scale: 2.6, opacity: 0, duration: 0.55, ease: "power2.out" }, tt + 0.05);
+        }
+
+        // Feature chips
+        (s.chips || []).forEach((c, i) => {
+          const el = "#chip-" + k + "-" + i;
+          const ci = hold + 0.5 + i * 0.22;
+          tl.fromTo(el, { opacity: 0, x: 60, scale: 0.9 }, { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, ci);
+          tl.fromTo(el + " .ico", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.2)" }, ci + 0.15);
+          if (c.count) {
+            const [pre, to, suf, d] = c.count;
+            const b = document.querySelector(el + " b");
+            const o = { v: 0 };
+            tl.to(o, { v: to, duration: 1.3, ease: "power3.out", onUpdate: () => (b.textContent = pre + fmt(o.v, d) + suf) }, ci + 0.1);
+          }
+          if (k < STEPS.length - 1) tl.to(el, { opacity: 0, x: 30, duration: 0.3, ease: "power2.in" }, next - 0.3);
+        });
+      });
+
+      // Check-in moment: location pulses behind the phone
+      const tci = startOf(STEPS.length - 2);
+      ["#ring-0", "#ring-1", "#ring-2"].forEach((r, i) => {
+        tl.fromTo(r, { scale: 0.7, opacity: 0.5 }, { immediateRender: false, scale: 1.9, opacity: 0, duration: 1.3, ease: "power1.out", repeat: 1 }, tci + 0.3 + i * 0.4);
+      });
+
+      // ---- Virtual camera: zoom into taps and scrolling content, back out on transitions ----
+      const APP_X = 1092; // app origin on stage (phone-wrap + bezel)
+      const APP_Y = 127; // + status bar
+      const FOCUS = [1340, 540]; // a zoom target is pulled halfway toward this screen point
+      let camFree = 0;
+      let camZoomed = false;
+      const cam = (t, s, fx, fy, d) => {
+        t = Math.max(t, camFree);
+        let x = 0;
+        let y = 0;
+        if (s !== 1) {
+          const px = APP_X + fx * S;
+          const py = APP_Y + fy * S;
+          x = px + 0.5 * (FOCUS[0] - px) - s * px;
+          y = py + 0.5 * (FOCUS[1] - py) - s * py;
+          x = Math.max(x, 960 - s * 1080); // keep the phone's left edge clear of the captions
+        }
+        tl.to("#cam", { x, y, scale: s, duration: d, ease: "power3.inOut" }, t);
+        camFree = t + d;
+        camZoomed = s !== 1;
+      };
+      tl.set("#cam", { transformOrigin: "0% 0%" }, 0);
+      STEPS.forEach((s, k) => {
+        const next = startOf(k + 1);
+        const hold = k === 0 ? INTRO : startOf(k);
+        if (s.strip) {
+          const [x, y, w, h] = s.strip.rect;
+          cam(hold + 0.15, 1.3, x + w / 2, y + h / 2, 0.6);
+        }
+        if (s.zoom && s.tap) cam(next - 1.05, s.zoom, s.tap[0], s.tap[1], 0.6);
+        if (camZoomed && k < STEPS.length - 1) cam(next + 0.05, 1, 0, 0, 0.65);
+      });
+
+      // ---- Finale: camera pulls out, the phone joins a wall of screens ----
+      const W = stageEnd;
+      const WALL_IMGS = ["map-3", "disc", "place", "board", null, "prof", "passport", "stamp", "moment"];
+      const wallEl = document.getElementById("wall");
+      WALL_IMGS.forEach((img, i) => {
+        if (!img) return;
+        wallEl.insertAdjacentHTML("beforeend", '<div class="tile" style="left:' + (960 + (i - 4) * 205 - 89) + 'px"><img src="assets/screens/' + img + '.jpg" alt="" /></div>');
+      });
+      document.getElementById("wall-title").innerHTML = words("Một app. Trọn vẹn hành trình.");
+
+      tl.to(["#cap-" + (STEPS.length - 1), ".brand", "#nav", "#chips"], { opacity: 0, duration: 0.4, ease: "power2.in" }, W - 0.1);
+      const PS = 0.42; // phone shrinks to wall-tile size
+      tl.to("#cam", { x: 960 - PS * 1292, y: 540 - PS * 540, scale: PS, duration: 1.1, ease: "expo.inOut" }, Math.max(W, camFree));
+      tl.fromTo(".tile", { opacity: 0, y: 180, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "expo.out", stagger: { each: 0.06, from: "center" } }, W + 0.55);
+      tl.set("#wall-title", { opacity: 1 }, W + 0.75);
+      tl.fromTo("#wall-title .wi", { yPercent: 115 }, { yPercent: 0, duration: 0.8, ease: "expo.out", stagger: 0.06 }, W + 0.8);
+      tl.to("#world", { scale: 0.93, x: -30, duration: OUTRO - W - 1.4, ease: "sine.inOut" }, W + 1.4);
+
+      // Stage exit
+      tl.to("#stage-inner", { opacity: 0, duration: 0.5, ease: "power2.in" }, OUTRO - 0.3);
+
+      // Outro
+      tl.fromTo("#wipe", { scale: 0 }, { scale: 24, duration: 0.9, ease: "expo.inOut" }, OUTRO - 0.1);
+      tl.fromTo("#outro-logo", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, OUTRO + 0.5);
+      tl.fromTo("#outro-title span", { opacity: 0, rotationX: -90, yPercent: 40 }, { opacity: 1, rotationX: 0, yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.05 }, OUTRO + 0.7);
+      tl.fromTo("#outro-line", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, OUTRO + 1.4);
+      tl.fromTo("#outro-url", { opacity: 0, y: 20, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.8)" }, OUTRO + 1.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
