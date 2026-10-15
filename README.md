@@ -185,10 +185,19 @@ STEP 4  app_token hết hạn → POST /auth/refresh     → rotate → cặp to
 
 ## 📂 Cấu trúc repo
 
+Checkpoint gồm repo tổng này (tài liệu, thiết kế, roadmap) và 4 repo mã nguồn:
+
+| Repo | Nội dung | Trạng thái |
+|---|---|---|
+| [checkpoint-app-go](https://github.com/handao2303/checkpoint-app-go) | Go API + worker ffmpeg trên Cloud Run | ✅ đang chạy |
+| [checkpoint-app-reactjs](https://github.com/handao2303/checkpoint-app-reactjs) | React 19 PWA — bản đang chạy tại [checkpoint-app.space](https://checkpoint-app.space) | ✅ đang chạy |
+| [checkpoint-app-rn](https://github.com/handao2303/checkpoint-app-rn) | App React Native (Expo SDK 56) cho iOS / Android | 🔄 parity với web |
+| [checkpoint-app-flutter](https://github.com/handao2303/checkpoint-app-flutter) | App Flutter cho iOS / Android, kèm cache ảnh cục bộ | 🔄 giai đoạn đầu |
+
 ```
 checkpoint/
-├── backend/        Go API: chi, pgx/Supabase, JWT, R2, Cloud Run    (git repo riêng)
-├── web/            Vite + React 19 PWA: Tailwind v4, Cloudflare     (git repo riêng)
+├── backend/        Go API: chi, pgx/Supabase, JWT, R2, Cloud Run    → checkpoint-app-go
+├── web/            Vite + React 19 PWA: Tailwind v4, Cloudflare     → checkpoint-app-reactjs
 ├── design/         mockups + design tokens (design/tokens/)
 ├── docs/           STATUS.md · backend.md · frontend.md · các plan
 ├── checkpoint_*_svg/  bộ icon huy hiệu, level, khung avatar
